@@ -21,6 +21,8 @@ Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'api/users'
 ], function () {
+    Route::post('reset-password', [UsersController::class, 'resetPassword']);
+
     Route::post('/logout', [UsersController::class, 'logout']);
     Route::get('/', [UsersController::class, 'index']);
     Route::get('/{id}', [UsersController::class, 'get']);

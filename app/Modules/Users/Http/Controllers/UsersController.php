@@ -149,6 +149,32 @@ class UsersController extends Controller
 
     public function resetPassword(Request $request)
     {
-        // Implement your reset password logic
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|string|min:8',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'payload' => $validator->errors(),
+                'status' => '406'
+            ], 406);
+        }
+
+        // Retrouver l'utilisateur par son adresse e-mail
+        $user = Users::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json([
+                'payload' => 'User not found',
+                'status' => '404'
+            ], 404);
+        }
+
+        // Mettre à jour le mot de passe de l'utilisateur
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response()->json(['message' => 'Password reset successfully'], 200);
     }
 }
