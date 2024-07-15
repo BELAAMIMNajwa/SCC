@@ -1,11 +1,11 @@
 <?php
 
 namespace App\Modules\Users\Models;
-
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+
 
 class Users extends Authenticatable
 {
@@ -17,6 +17,6 @@ class Users extends Authenticatable
         'LastName',
         'email',
         'password',
-        
+
     ];
 }
