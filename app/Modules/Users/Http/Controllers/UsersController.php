@@ -85,26 +85,32 @@ class UsersController extends Controller
         return Users::findOrFail($id);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required|exists:users,id',
-            'username' => 'sometimes|string',
-            'email' => 'sometimes|email|unique:users,email,' . $request->id,
-            'FirstName' => 'sometimes|string',
-            'LastName' => 'sometimes|string',
+            'username' => 'string',
+            'FirstName' => 'string',
+            'LastName' => 'string',
+            'email' => 'email|unique:users,email,' . $id,
+            'password' => 'string|min:6',
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json([
-                'payload' => $validator->errors(),
-                'status' => '406'
-            ], 406);
+                'error' => 'Validation error',
+                'details' => $validator->errors()
+            ], 400);
         }
-
-        $user = Users::findOrFail($request->id);
-        $user->update($request->all());
-
+    
+        $user = Users::findOrFail($id);
+        $user->update([
+            'username' => $request->username,
+            'FirstName' => $request->FirstName,
+            'LastName' => $request->LastName,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+    
         return response()->json($user, 200);
     }
 
@@ -151,7 +157,7 @@ class UsersController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|exists:users,email',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:6',
         ]);
 
         if ($validator->fails()) {
@@ -161,7 +167,6 @@ class UsersController extends Controller
             ], 406);
         }
 
-        // Retrouver l'utilisateur par son adresse e-mail
         $user = Users::where('email', $request->email)->first();
 
         if (!$user) {
@@ -171,7 +176,6 @@ class UsersController extends Controller
             ], 404);
         }
 
-        // Mettre à jour le mot de passe de l'utilisateur
         $user->password = Hash::make($request->password);
         $user->save();
 

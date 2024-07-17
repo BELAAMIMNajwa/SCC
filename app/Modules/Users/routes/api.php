@@ -27,7 +27,7 @@ Route::group([
     Route::get('/', [UsersController::class, 'index']);
     Route::get('/{id}', [UsersController::class, 'get']);
     Route::post('/create', [UsersController::class, 'create']);
-    Route::post('/update', [UsersController::class, 'update']);
+    Route::put('/update/{id}', [UsersController::class, 'update']);
     Route::post('/delete', [UsersController::class, 'delete']);
     Route::post('/changePassword', [UsersController::class, 'changePassword']);
     Route::post('/resetPassword', [UsersController::class, 'resetPassword']);
